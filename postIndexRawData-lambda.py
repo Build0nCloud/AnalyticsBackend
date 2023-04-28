@@ -45,12 +45,16 @@ def lambda_handler(event, context):
     response = {
         "statusCode": r.status_code,
         "headers": {
-            "Access-Control-Allow-Origin": '*',
-        "body": "Reason: " + r.reason + "***" + r.text
+            "Access-Control-Allow-Origin": '*'
         },
+        "body": "Reason: " + r.reason + "***" + r.text,
         "isBase64Encoded": False
     }
 
     # Add the update results to the response
     # response['body'] = r.text
     return response
+    
+    
+    raise Exception('Something went wrong')
+
