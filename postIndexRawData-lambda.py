@@ -21,14 +21,26 @@ def lambda_handler(event, context):
     
     headers = { "Content-Type": "application/json" }
     myBody = json.loads(event["body"])
+    #myBody=event["body"]
     print("Index Found : " + myBody["indexName"])
     
     #create url
-    url = host +'/' + myBody["indexName"] + '/' + '_doc' + '/'+ myBody['indexDocumentID']
+    if (myBody["additionalOpts"]["doc_as_upsert"]) :
+        url = host +'/' + myBody["indexName"] + '/' + '_update' + '/'+ myBody['indexDocumentID']
+        myPayload = {
+            "doc" : myBody["doc"],
+            "doc_as_upsert" : True
+        }
+    else :
+        url = host +'/' + myBody["indexName"] + '/' + '_doc' + '/'+ myBody['indexDocumentID']
+        myPayload=myBody["doc"]
+    
     print("Final url: " + url)
     
+    print("sending payload " + json.dumps(myPayload))
     
-    r = requests.post(url, auth=awsauth, json=myBody["doc"], headers=headers)
+    r = requests.post(url, auth=awsauth, json=myPayload, headers=headers)
+#  r = requests.post(url, auth=awsauth, json=myBody["doc"], headers=headers)
 
     response = {
         "statusCode": r.status_code,
@@ -42,7 +54,3 @@ def lambda_handler(event, context):
     # Add the update results to the response
     # response['body'] = r.text
     return response
-    
-    
-    raise Exception('Something went wrong')
-
